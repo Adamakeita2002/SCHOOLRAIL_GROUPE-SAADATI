@@ -1,0 +1,130 @@
+@extends ('layouts.master')
+
+
+@section ('content')
+  <?php use Carbon\Carbon;?>
+
+    <div class="app">
+      <div class="app-body">
+      <!--SIDEBAR -->
+      @include('layouts.sidebarS')
+      <!--END SIDEBAR -->
+
+      <div class="app-content">
+
+      <!--NAVBAR -->
+      @include('layouts.navbar')
+      <!--END NAVBAR -->
+
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item " aria-current="page">Accueil</li>
+            <li class="breadcrumb-item active" aria-current="page">Notifications</li>
+          </ol>
+        </nav>
+
+      <div class="container-fluid"> <!-- container-fluid-->
+
+
+          @foreach($ltns as $ltn)
+          <div class="callout 
+          @if($ltn->type =='RESSOURCE') callout-info 
+          @elseif($ltn->type =='MARK') callout-warning 
+          @elseif($ltn->type =='BDE')  callout-danger
+          @elseif($ltn->type =='CALENDAR') callout-success
+          @elseif($ltn->type =='NEWS')
+          @elseif($ltn->type =='TEST')callout-test
+          @elseif($ltn->type =='FORUM')callout-forum
+          @endif" style="@if($ltn->state=='read') background-color:#f50d0d1c; @endif" >
+          
+          @if($ltn->type =='RESSOURCE')<h5><b>Ressource</b>   
+           <a href="/student/ressource"> (voir la ressource)</a><span class="pull-right" style="font-size: 12px"> <b><i>{{$ltn->created_at->diffForHumans()}}</i></b> </span></h5>
+          @endif
+
+          @if($ltn->type =='MARK')<h5><b>Note</b>  <a href="/student/mark"> (voir les notes)</a><span class="pull-right" style="font-size: 12px"> <b><i>{{$ltn->created_at->diffForHumans()}}</i></b> </span></h5>
+          @endif
+
+          @if($ltn->type =='BDE')<h5><b>Bureau des Etudiants</b>   
+           <a href="/student/schoolBde"> (voir l'actu BDE)</a><span class="pull-right" style="font-size: 12px"> <b><i>{{$ltn->created_at->diffForHumans()}}</i></b> </span></h5>
+          @endif
+
+          @if($ltn->type =='CALENDAR')<h5><b>Calendrier</b>   
+           <a href="/student/calendar"> (voir le calendrier)</a><span class="pull-right" style="font-size: 12px"> <b><i>{{$ltn->created_at->diffForHumans()}}</i></b> </span></h5>
+          @endif
+
+          @if($ltn->type =='NEWS')<h5><b>Infos School</b>   
+           <a href="/student/schoolNews"> (voir l' infos)</a><span class="pull-right" style="font-size: 12px"> <b><i>{{$ltn->created_at->diffForHumans()}}</i></b> </span></h5>
+          @endif
+
+          @if($ltn->type =='TEST')<h5><b>Exercice (Test)</b>   
+           <a href="/student/test"> (voir l'Exercice (Test))</a><span class="pull-right" style="font-size: 12px"> <b><i>{{$ltn->created_at->diffForHumans()}}</i></b> </span></h5>
+          @endif
+
+          @if($ltn->type =='FORUM')<h5><b>Forum</b>   
+           <a href="/student/schoolBde"> (voir le sujet)</a><span class="pull-right" style="font-size: 12px"> <b><i>{{$ltn->created_at->diffForHumans()}}</i></b> </span></h5>
+          @endif
+
+          <p>{{$ltn->label}} </p>
+          </div>
+          @endforeach
+
+      </div> <!-- END container-fluid -->
+
+
+      </div>
+    </div>
+  </div>
+
+
+@endsection
+
+
+          @foreach($Ressourceltn as $ltn)
+          <div class="callout callout-info">
+            <h5><b>Ressource</b> <a href="/student/ressource"> (voir les ressources)</a></h5>
+            <p>{{$ltn->label}}</p>
+          </div>
+          @endforeach
+
+          @foreach($Markltn as $ltn)
+          <div class="callout callout-warning">
+            <h5><b>Note</b> <a href="/student/note"> (voir les notes)</a></h5>
+            <p>{{$ltn->label}}</p>
+          </div>
+          @endforeach
+
+          @foreach($Bdeltn as $ltn)
+          <div class="callout callout-danger">
+            <h5><b>Bureau des étudiants</b> <a href="/student/schoolBde"> (voir l'activité)</a></h5>
+            <p>{{$ltn->label}}</p>
+          </div>
+          @endforeach
+
+          @foreach($Calendarltn as $ltn)
+          <div class="callout callout-success">
+            <h5><b>Calendrier</b> <a href="/student/calendar"> (voir l'info - BDE)</a></h5>
+            <p>{{$ltn->label}}</p>
+          </div>
+          @endforeach
+
+          @foreach($Newsltn as $ltn)
+          <div class="callout ">
+            <h5><b>Infos School</b> <a href="/student/schoolNews"> (voir l'info)</a></h5>
+            <p>{{$ltn->label}}</p>
+          </div>
+          @endforeach
+
+          @foreach($Testltn as $ltn)
+          <div class="callout callout-test ">
+            <h5><b>Test (EXERCICE)</b> <a href="/student/test"> (voir l'info)</a></h5>
+            <p>{{$ltn->label}}</p>
+          </div>
+          @endforeach
+
+          @foreach($Forumltn as $ltn)
+          <div class="callout callout-forum ">
+            <h5><b>Forum</b> <a href="/student/forum"> (voir le forum)</a></h5>
+            <p>{{$ltn->label}}</p>
+          </div>
+          @endforeach

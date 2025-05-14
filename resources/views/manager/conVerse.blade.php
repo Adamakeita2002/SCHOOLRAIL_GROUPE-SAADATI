@@ -1,0 +1,363 @@
+@extends ('layouts.master')
+
+
+@section ('content')
+<?php
+
+$classroom = session()->get( 'classroom' );
+$x = session()->get( 'x' );
+$verse = session()->get( 'verse' );
+//dd($classroom, $x, $verse->id);
+
+  if(empty($classroom)){
+      header("Location: http://localhost:8000/manager/versement");
+      die();
+  }
+  if(empty($x)){
+      header("Location: http://localhost:8000/manager/versement");
+      die();
+  }
+
+
+ use Carbon\Carbon;
+
+  $calendar="activve" ;
+
+  ?>
+    <div class="app">
+      <div class="app-body">
+      <!--SIDEBAR -->
+      @include('layouts.sidebarM')
+      <!--END SIDEBAR -->
+
+      <div class="app-content">
+
+      <!--NAVBAR -->
+      @include('layouts.navbarM')
+      <!--END NAVBAR -->
+
+
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item " aria-current="page">Accueil</li>
+            <li class="breadcrumb-item " aria-current="page"><a href="/manager/versement">Versement</a></li>
+            <li class="breadcrumb-item active" aria-current="page">
+                  @if($x==1) Scolarité
+                  @elseif($x==2) Cantine
+                  @elseif($x==3) Bus 
+                  @elseif($x==4) Tenue Scolaire (Classe)
+                  @elseif($x==5) Tenue Scolaire (Sport)
+                  @elseif($x==6) Activité Périscolaire(Basket)
+                  @elseif($x==7) Activité Périscolaire(Natation)
+                  @elseif($x==8) Activité Périscolaire(Taekwondo)
+                  @elseif($x==9) Fourniture
+                  @endif
+           </li>
+          </ol>
+        </nav>
+
+      <div class="container-fluid"> <!-- container-fluid-->
+
+              @if (session('status1'))
+                  <div align="center">
+                      <div class="alert alert-success text-center">
+                       <b><i class="icon-info"></i> {{ session('status1') }}<br></b>
+                      </div>
+                  </div>
+              @endif
+
+<h2 class="text-center"> Continuer le versement de <b>
+                  @if($x==1) Scolarité
+                  @elseif($x==2) Cantine
+                  @elseif($x==3) Bus 
+                  @elseif($x==4) Tenue Scolaire (Classe)
+                  @elseif($x==5) Tenue Scolaire (Sport)
+                  @elseif($x==6) Activité Périscolaire(Basket)
+                  @elseif($x==7) Activité Périscolaire(Natation)
+                  @elseif($x==8) Activité Périscolaire(Taekwondo)
+                  @elseif($x==9) Fourniture
+                  @endif
+                </b> en <b>{{$classroom->name}}</b>
+</h2>
+
+
+
+          <div class="accordion pt-2 pb-2"  id="accordionExample{{$classroom->id}}">
+            <div class="card " style="background-color: #0b06cc45 !important;">
+              <div class="card-header bg-secondary " id="headingOne{{$classroom->id}}">
+                <h2 class=" text-center mb-0">
+                  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseOne{{$classroom->id}}" aria-expanded="true" aria-controls="collapseOne{{$classroom->id}}">
+                <b>{{$classroom->program->fullname}}  -  {{$classroom->name}}</b>
+                  </button>
+                </h2>
+              </div>
+
+              <div id="collapseOne{{$classroom->id}}" class="collapse show" aria-labelledby="headingOne{{$classroom->id}}" data-parent="#accordionExample{{$classroom->id}}">
+
+            <div class="card-body">
+                
+            <table class="table ">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">NOM ET PRENOM(s)</th>
+                <th scope="col" style="font-weight: bold; color: white;">VERSEMENTS
+                  @if($x==1) Scolarité
+                  @elseif($x==2) Cantine 
+                  @elseif($x==3) Bus
+                  @elseif($x==4) Tenue Scolaire (Classe)
+                  @elseif($x==5) Tenue Scolaire (Sport)
+                  @elseif($x==6) Activité Périscolaire(Basket)
+                  @elseif($x==7) Activité Périscolaire(Natation)
+                  @elseif($x==8) Activité Périscolaire(Taekwondo)
+                  @elseif($x==9) Fourniture
+                  @endif
+                </th>
+                
+              </tr>
+            </thead>
+            
+            <tbody>
+
+
+
+              @foreach ($classroom->students->sortBy('name') as $student)
+
+                    <?php $T =0;  ?>
+                    @foreach($student->versements->where('type',$x) as $versement) 
+                    
+                    <?php $T= $T + $versement->amount;  ?>
+                       
+                    @endforeach 
+
+              <tr id="C{{$student->id}}"> 
+                <td>
+                  <b>{{$student->name}}</b> {{$student->surname}} <span style= "color:@if($student->gender=='F')#c22e6d @else  blue @endif">({{$student->gender}})</span> <br> {{$student->matricule}} <br> 
+                  <span class="badge badge-dark" ><b>{{number_format($T)}} FCFA </b></span> 
+                </td> 
+                <?php $V=$student->versements->where('type',$x)->count();  ?>
+
+                  @if($V<=0)
+                <td> <b>Aucun Versement</b> </td>
+
+                  @else                   
+                  <td>
+                    <?php $i =1;  ?>
+                    @foreach($student->versements->where('type',$x) as $versement) 
+                    <span class="badge @if($x==1)btn-primary 
+                    @elseif($x==2)btn-warning
+                    @elseif($x==3)btn-success 
+                    @elseif($x==4)btn-frose 
+                    @elseif($x==5)btn-frose 
+                    @elseif($x==6)btn-forange
+                    @elseif($x==7)btn-forange
+                    @elseif($x==8)btn-forange
+                    @elseif($x==9)btn-fmarron
+                    @endif
+                    @if(!empty($verse))
+                      @if ($versement->id == $verse->id)badge-secondary @endif
+                    @endif
+                    @if($i==1 AND $x==1)btn-dark @endif
+                     "  >
+                       <?php echo $i;  ?>
+                      <span class="text-dark"><!-- START Edit and delete VERSEMENT -->
+                      <a href="" class="pl-2" data-toggle="modal" data-target="#MM{{$versement->id}}"><b><i class="icon-info font-lg text-white" style="font-size: 10px"></i></b></a>
+                      
+                       <!-- Modal Edit VERSEMENT -->
+                        <div class="modal fade" id="MM{{$versement->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <form></form>
+                        <form action="{{ URL::to('/manager/versement/modifyVersement') }}" method="post" enctype="multipart/form-data">
+                          <input type="hidden" value="{{ csrf_token() }}" name="_token">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">Modifier ce versement</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                              <div class="modal-body">
+                                <div class="text-center">
+                                <h5><b>{{$versement->student->name}} {{$versement->student->surname}} </b> <br> Versement n°{{$i}} ({{number_format($versement->amount)}} FCFA) </h5>
+                    
+                                <div class="form-group">
+                                  <label><b>Entrer le montant</b></label>
+                                  <input type="number" class="form-control" name="amount" placeholder="Montant" required="">
+                                </div>
+
+                                <input type="hidden" class="form-control" name="id" value="{{$versement->id}}" hidden="">
+                              <button type="submit" class="btn btn-warning text-white">
+                                Valider la modification
+                              </button>
+                              </div>
+                            </div>
+
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">ANNULER</button>
+                              </div>
+                          </div>
+                        </div>
+                        </form>
+                      </div>
+                      
+
+                    <!--  Delete VERSEMENT -->
+                    <a href="" class="pl-3" data-toggle="modal" data-target="#DD{{$versement->id}}"><b><i class="icon-trash font-lg text-danger" style="font-size: 10px"></i></b></a>
+                       <!-- Modal DELETE VERSEMENT -->
+                        <div class="modal fade" id="DD{{$versement->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <form></form>
+                        <form action="{{ URL::to('/manager/versement/deleteVersement') }}" method="post" enctype="multipart/form-data">
+                          <input type="hidden" value="{{ csrf_token() }}" name="_token">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="exampleModalLabel">SUPPRIMER ce versement</h5>
+                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                  </button>
+                                </div>
+                              <div class="modal-body">
+                                <div class="text-center">
+                                <h5><b>{{$versement->student->name}} {{$versement->student->surname}} </b> <br> Versement n°{{$i}} ({{number_format($versement->amount)}} FCFA) </h5>
+                    
+                                <h5><b>Voulez - vous vraiment supprimer ce versement ?</b> </h5>
+                              <input type="hidden" class="form-control" name="id" value="{{$versement->id}}" hidden="">
+                              <button type="submit" class="btn btn-danger text-white">
+                               OUI, SUPPRIMER CE VERSEMENT
+                              </button>
+                              </div>
+                            </div>
+
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">ANNULER</button>
+                              </div>
+                          </div>
+                        </div>
+                        </form>
+                      </div>
+                      </span><!-- END EDIT AND DELETE VERSEMENT -->
+                       <hr class="hrr">
+                      <b>{{number_format($versement->amount)}} FCFA </b>
+                    </span> 
+                    <?php $i++ ;  ?>
+                    @endforeach 
+                  </td>                 
+                  @endif
+        
+              <td> 
+
+              <div class="row">
+                  <div class="col-sm-6">
+                    <form></form>
+                    <form action="/manager/@if($x==1)CreateScolarite
+                    @elseif($x==2)CreateCantine
+                    @elseif($x==3)CreateBus 
+                    @elseif($x==4)CreateTenuClasse 
+                    @elseif($x==5)CreateTenuSport
+                    @elseif($x==6)CreateBasket
+                    @elseif($x==7)CreateNatation
+                    @elseif($x==8)CreateTaekwondo
+                    @elseif($x==9)CreateFourniture
+                    @endif"
+                    id="sco{{$student->id}}" method="post" enctype="multipart/form-data">
+                      <input type="hidden" value="{{ csrf_token() }}" name="_token">
+                      <input type="hidden" value="{{$student->id}}" name="student_id">
+                      <input type="hidden" value="{{$x}}" name="verseType">
+                      <input type="number" class="form-control" name="amount" placeholder="Montant" required="">
+                      <button type="submit" class="btn @if($x==1)btn-primary 
+                    @elseif($x==2)btn-warning
+                    @elseif($x==3)btn-success 
+                    @elseif($x==4)btn-frose 
+                    @elseif($x==5)btn-frose 
+                    @elseif($x==6)btn-forange
+                    @elseif($x==7)btn-forange
+                    @elseif($x==8)btn-forange
+                    @elseif($x==9)btn-fmarron
+                    @endif form-control  mt-1" ><b>Valider</b></button>
+                    </form>
+                  </div>  
+                  <div class="col-sm-6">
+                    <form></form>
+                    <form action="/manager/@if($x==1)CreateScolaritePrint
+                    @elseif($x==2)CreateCantinePrint
+                    @elseif($x==3)CreateBusPrint 
+                    @elseif($x==4)CreateTenuClassePrint 
+                    @elseif($x==5)CreateTenuSportPrint
+                    @elseif($x==6)CreateBasketPrint
+                    @elseif($x==7)CreateNatationPrint
+                    @elseif($x==8)CreateTaekwondoPrint
+                    @elseif($x==9)CreateFourniturePrint
+                    @endif"
+                    id="sco{{$student->id}}" method="post" enctype="multipart/form-data">
+                      <input type="hidden" value="{{ csrf_token() }}" name="_token">
+                      <input type="hidden" value="{{$student->id}}" name="student_id">
+                      <input type="hidden" value="{{$x}}" name="verseType">
+                      <button type="submit" class="btn btn-bordo form-control" >
+                        <b>Etats <i class="fa fa-print" style="font-size: 20px" aria-hidden="true"></i></b>
+                      </button>
+                    </form>
+                  </div>   
+              
+              </div> 
+
+<form></form>
+
+
+              </td>
+
+
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+
+                  <!-- NOTE TOGGLE -->
+                  <p>
+                    <a class="btn btn-dark" data-toggle="collapse" href="#collapseExample{{$classroom->id}}" role="button" aria-expanded="false" aria-controls="collapseExample{{$classroom->id}}">
+                      PLUS D'INFOS <b>({{$classroom->name}})</b>
+                    </a>
+                  </p>
+
+              <div class="collapse" id="collapseExample{{$classroom->id}}">
+                <div class="row">
+                  <div class="col-sm-4">
+                    <div class="card card-body bg-dark" style="color:white;">
+                      <h3 class="text-center">EFFECTIF</h3>
+                      <h1 class="text-center">{{$classroom->students->count()}}</h1>
+                    </div>
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="card card-body bg-dark" style="color:white;">
+                      <h3 class="text-center">GARCONS</h3>
+                      <h1 class="text-center">{{$classroom->students->where('gender','M')->count()}}</h1>
+                    </div>
+                  </div>                  
+                  <div class="col-sm-4">
+                    <div class="card card-body bg-dark" style="color:white;">
+                      <h3 class="text-center">FILLES</h3>
+                      <h1 class="text-center">{{$classroom->students->where('gender','F')->count()}}</h1>
+                    </div>
+                  </div> 
+                </div>
+
+              </div> 
+                  <!-- NOTE TOGGLE -->
+
+                </div>
+
+              </div>
+            </div>
+          
+          </div>
+
+
+
+      </div> <!-- END container-fluid -->
+
+
+      </div>
+    </div>
+  </div>
+
+
+@endsection

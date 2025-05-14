@@ -1,0 +1,668 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Manager;
+use App\Program;
+use App\Teacher;
+use App\Student;
+use App\Test;
+use App\Tutor;
+use App\Classroom;
+use App\Ressource;
+use App\Actuality;
+use App\Calendar;
+use App\Epreuve;
+use App\Homework;
+use App\Ahomework;
+use App\Academicyear;
+use App\Semester;
+use App\Subject;
+use App\Mark;
+use App\Director;
+use App\Tltn;
+use App\Sltn;
+use App\Versement;
+use App\Imports\UsersImport;
+use Importer;
+
+use Maatwebsite\Excel\Facades\Excel;
+//use Excel;
+
+
+use Carbon\Carbon;
+//use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request;
+
+
+class ImportExcelController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function CreateManyStudent(Request $request)
+
+    {
+
+         $this->validate(request(),[
+
+        //    'classroom_id'=>'required',
+            'upload_file'=> 'required|max:5000|mimes:xlsx,xls,csv',
+        ]);
+
+   //      dd($request->id);
+
+   //     if (request()->hasFile('upload_file')){
+        $uploadedFile = $request->file('upload_file');
+        $FileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+        $extension = $uploadedFile->getClientOriginalExtension();
+        $destinationPath = public_path('/files/canevas/');
+        $uploadedFile->move($destinationPath, $FileName);
+
+        $excel= Importer::make('Excel');
+        $excel->load($destinationPath.$FileName);
+        $collection=$excel->getCollection();
+
+       //$date = Carbon::parse($collection[1][2], 'UTC');
+       //dd ($date->isoFormat('YYYY-M-D'));
+       //dd($date);
+       //dd($collection);
+       $student=Student::get();
+       $emails=$student->pluck('email')->toArray();
+       $classroom=Classroom::get();
+       $classes=$classroom->pluck('name')->toArray();
+       $box=array();
+       $boxC=array();
+       $boxName=array();
+       $boxSurname=array();
+       $boxClass=array();
+
+
+    if ($collection[1][0]=='NOM' AND $collection[1][1]=='PRENOMS' AND $collection[1][2]=='DATE_DE_NAISSANCE' AND $collection[1][3]=='GENRE' AND $collection[1][4]=='EMAIL' AND $collection[1][5]=='TELEPHONE' AND $collection[1][6]=='ADRESSE' AND $collection[1][7]=='NATIONALITE' AND $collection[1][8]=='CLASSE') {
+
+
+        for ($i=2; $i < $collection->count() ; $i++) {
+
+
+            if (in_array($collection[$i][4], $emails) ) { // IF MAIL IN ARRAY
+
+
+                    array_push($box,$collection[$i][4]);
+                    array_push($boxName,$collection[$i][0]);
+                    array_push($boxSurname,$collection[$i][1]);
+                    array_push($boxClass,$collection[$i][8]);
+
+
+            } else  { //ELSE IF MAIL IS NOT IN ARRAY
+
+                    if( !empty($collection[$i][0])  AND !empty($collection[$i][1]) AND !empty($collection[$i][4]) ) { //IF CHECKER EMPTY
+
+    $varMachaine0 = $collection[$i][0];
+    $varMachaine1 = $collection[$i][1];
+
+
+      $search0  = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ð', 'ò', 'ó', 'ô', 'õ', 'ö', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ',"’");
+      //Préférez str_replace à strtr car strtr travaille directement sur les octets, ce qui pose problème en UTF-8
+      $replace0 = array('A', 'A', 'A', 'A', 'A', 'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 'a', 'a', 'a', 'a', 'a', 'a', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'y', 'y',"'");
+
+      $name = str_replace($search0, $replace0, $varMachaine0);
+      $surname = str_replace($search0, $replace0, $varMachaine1);
+
+
+
+                        if (in_array($collection[$i][8], $classes)) { //IF CHECKER CLASS EXIST CREATE WITH CLASS
+
+                            $date = Carbon::parse($collection[$i][2], 'UTC');
+                            $date->isoFormat('YYYY-M-D');
+                            $cl=$classroom->where('name',$collection[$i][8])->first();
+
+
+
+                            $student=Student::create([
+
+                                'name'=> strtoupper($name),
+                                'surname'=>strtoupper($surname),
+                                'dateofbirth'=>$date->isoFormat('YYYY-M-D'),
+                                'gender'=>$collection[$i][3] ,
+                                'email'=>$collection[$i][4] ,
+                                'tel'=>$collection[$i][5] ,
+                                'address'=> $collection[$i][6],
+                                'nationality'=>$collection[$i][7],
+                                'classroom_id'=>$cl->id,
+
+                                 ]);
+
+                            $pass = str_random(6); // FOR PASSWORD PURPOSE
+                            $pass=strtolower($pass);
+
+                            $student->matricule= substr(strtoupper($name),0,1).''.substr(strtoupper($surname),0,1).''.$cl->program->id.''.$cl->id.''.$student->id ;
+                            $student->password=$pass;
+                            $student->image=$pass;
+                            $student->save();
+
+                            $academicyearP=Academicyear::where('state','process')->first();
+                            $student->academicyears()->attach($academicyearP->id);
+
+                            array_push($boxC,$collection[$i][4]);
+
+                        } else { //ELSE IF CHECKER CLASS DONT EXIST, CREATE WITHOUT CLASS
+
+                            $date = Carbon::parse($collection[$i][2], 'UTC');
+                            $date->isoFormat('YYYY-M-D');
+                            $student=Student::create([
+
+                                'name'=> strtoupper($name),
+                                'surname'=>strtoupper($surname),
+                                'dateofbirth'=>$date->isoFormat('YYYY-M-D'),
+                                'gender'=>$collection[$i][3] ,
+                                'email'=>$collection[$i][4] ,
+                                'tel'=>$collection[$i][5] ,
+                                'address'=> $collection[$i][6],
+                                'nationality'=> $collection[$i][7],
+
+                                 ]);
+
+                            array_push($boxC,$collection[$i][4]);
+
+                        } //END IF CHECKER CLASS EXIST
+
+
+
+                    } //END IF CHECKER EMPTY
+
+            } //END IF MAIL IN ARRAY
+
+        } //END FOR
+
+
+        $students=Student::get();
+
+        return redirect('/manager/student/many')
+        ->with( ['box' => $box, 'boxC' => $boxC, 'students' => $students, 'boxName' => $boxName, 'boxSurname' => $boxSurname,] );
+
+
+    } else { //ELSEIF COLLECTION EN TETE
+
+        return redirect('/manager/student/many')->with('status1', 'UN PROBLEME EST SURVENU !');
+    }// END IF COLLECTION EN TETE
+
+}
+
+    public function CreateManyTeacher(Request $request)
+
+    {
+
+         $this->validate(request(),[
+
+        //    'classroom_id'=>'required',
+            'upload_file'=> 'required|max:5000|mimes:xlsx,xls,csv',
+        ]);
+
+   //      dd($request->id);
+
+   //     if (request()->hasFile('upload_file')){
+        $uploadedFile = $request->file('upload_file');
+        $FileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+        $extension = $uploadedFile->getClientOriginalExtension();
+        $destinationPath = public_path('/files/canevas/');
+        $uploadedFile->move($destinationPath, $FileName);
+
+        $excel= Importer::make('Excel');
+        $excel->load($destinationPath.$FileName);
+        $collection=$excel->getCollection();
+
+       //$date = Carbon::parse($collection[1][2], 'UTC');
+       //dd ($date->isoFormat('YYYY-M-D'));
+       //dd($date);
+       //dd($collection);
+       $teacher=Teacher::get();
+       $emails=$teacher->pluck('email')->toArray();
+       $box=array();
+       $boxC=array();
+       $boxName=array();
+       $boxSurname=array();
+
+
+    if ($collection[1][0]=='NOM' AND $collection[1][1]=='PRENOMS' AND $collection[1][2]=='DATE_DE_NAISSANCE' AND $collection[1][3]=='GENRE' AND $collection[1][4]=='EMAIL' AND $collection[1][5]=='TELEPHONE' AND $collection[1][6]=='ADRESSE' AND $collection[1][7]=='NATIONALITE' AND $collection[1][8]=='SPECIALITE') {
+
+        for ($i=2; $i < $collection->count() ; $i++) {
+
+        $varMachaine0 = $collection[$i][0];
+        $varMachaine1 = $collection[$i][1];
+
+
+        $search0  = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ð', 'ò', 'ó', 'ô', 'õ', 'ö', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ',"’");
+        //Préférez str_replace à strtr car strtr travaille directement sur les octets, ce qui pose problème en UTF-8
+        $replace0 = array('A', 'A', 'A', 'A', 'A', 'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 'a', 'a', 'a', 'a', 'a', 'a', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'y', 'y',"'");
+
+        $name = str_replace($search0, $replace0, $varMachaine0);
+        $surname = str_replace($search0, $replace0, $varMachaine1);
+
+
+            if (in_array($collection[$i][4], $emails) ) { // IF MAIL IN ARRAY
+
+
+                    array_push($box,$collection[$i][4]);
+                    array_push($boxName,$collection[$i][0]);
+                    array_push($boxSurname,$collection[$i][1]);
+
+
+            } else  { //ELSE IF MAIL IS NOT IN ARRAY
+
+                    if( !empty($collection[$i][0])  AND !empty($collection[$i][1]) AND !empty($collection[$i][4]) ) { //IF CHECKER EMPTY
+                            $date = Carbon::parse($collection[$i][2], 'UTC');
+                            $date->isoFormat('YYYY-M-D');
+
+
+                            $teacher=Teacher::create([
+
+                                'name'=> strtoupper($name),
+                                'surname'=>strtoupper($surname),
+                                'dateofbirth'=>$date->isoFormat('YYYY-M-D'),
+                                'gender'=>$collection[$i][3] ,
+                                'email'=>$collection[$i][4] ,
+                            //    'tel'=>$collection[$i][5] ,
+                            //    'address'=> $collection[$i][6],
+                            //    'nationality'=>$collection[$i][7],
+                            //    'speciality'=>$collection[$i][8],
+                                 ]);
+
+                           // $pass = str_random(8); // FOR PASSWORD PURPOSE
+                           // $pass=strtolower($pass);
+
+                            $teacher->fullname=$teacher->name.' '.$teacher->surname;
+
+
+
+                            $pass = str_random(8); // FOR PASSWORD PURPOSE
+                            $pass=strtolower($pass);
+                            $teacher->image=$pass;
+                            $teacher->password=$pass;
+                            $teacher->save();
+
+                            array_push($boxC,$collection[$i][4]);
+
+
+                    } //END IF CHECKER EMPTY
+
+            } //END IF MAIL IN ARRAY
+
+        } //END FOR
+
+
+        $teachers=teacher::get();
+
+        return redirect('/manager/teacher/many')
+        ->with( ['box' => $box, 'boxC' => $boxC, 'teachers' => $teachers, 'boxName' => $boxName, 'boxSurname' => $boxSurname,] );
+
+
+    } else { //ELSEIF COLLECTION EN TETE
+
+        return redirect('/manager/teacher/many')->with('status1', 'UN PROBLEME EST SURVENU !');
+    }// END IF COLLECTION EN TETE
+
+}
+
+
+    public function CreateManySubject(Request $request)
+
+    {
+        $semesterP=Semester::where('state','process')->first();
+
+         $this->validate(request(),[
+
+        //    'classroom_id'=>'required',
+            'upload_file'=> 'required|max:5000|mimes:xlsx,xls,csv',
+        ]);
+
+
+
+   //     if (request()->hasFile('upload_file')){
+        $uploadedFile = $request->file('upload_file');
+        $FileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+        $extension = $uploadedFile->getClientOriginalExtension();
+        $destinationPath = public_path('/files/canevas/');
+        $uploadedFile->move($destinationPath, $FileName);
+
+        $excel= Importer::make('Excel');
+        $excel->load($destinationPath.$FileName);
+        $collection=$excel->getCollection();
+
+
+        $Ebox=array();
+        $EboxFullName=array();
+        $EboxClassroomID=array();
+        $EboxClassroom=array();
+        $SboxS=array();
+        $SboxC=array();
+        $XboxF=array();
+        $XboxC=array();
+        $XboxM=array();
+
+
+    if ($collection[1][0]=='NOM' AND $collection[1][1]=='CLASSE' AND $collection[1][2]=='PROFESSEUR' AND $collection[1][3]=='JOUR' AND $collection[1][4]=='HEURE-DEBUT' AND $collection[1][5]=='HEURE-FIN') {
+
+        for ($i=2; $i < $collection->count() ; $i++) {
+
+      $varMachaine0 = $collection[$i][0];
+      $varMachaine1 = $collection[$i][1];
+      $varMachaine2 = $collection[$i][2];
+
+      $search0  = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ð', 'ò', 'ó', 'ô', 'õ', 'ö', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ',"’");
+      //Préférez str_replace à strtr car strtr travaille directement sur les octets, ce qui pose problème en UTF-8
+      $replace0 = array('A', 'A', 'A', 'A', 'A', 'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 'a', 'a', 'a', 'a', 'a', 'a', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'y', 'y',"'");
+
+      $namee = str_replace($search0, $replace0, $varMachaine0);
+      $full = str_replace($search0, $replace0, $varMachaine2);
+      $class = str_replace($search0, $replace0, $varMachaine1);
+
+      $fullname=strtoupper($full);
+      $name=strtoupper($namee);
+      $classroom=strtoupper($class);
+
+            $checkClassroom=Classroom::where('name',$collection[$i][1])->first();
+
+
+
+            if (isset($checkClassroom)) {
+                                                  //$collection[$i][0]
+               //$CheckSubject=Subject::where('name',$name)->where('classroom_id',$checkClassroom->id)->first();
+               $CheckSubject=$semesterP->subjects()->where('name',$name)->where('classroom_id',$checkClassroom->id)->first();
+
+            }
+
+            if (isset($CheckSubject))  { // IF SUBJECT ALREADY CREATED
+
+
+                    array_push($Ebox,$CheckSubject->name);
+                    array_push($EboxFullName,$CheckSubject->teacher->fullname);
+                    array_push($EboxClassroomID,$CheckSubject->classroom_id);
+                    array_push($EboxClassroom,$CheckSubject->classroom->name);
+
+                  //  dd($CheckSubject);
+            } else  { //ELSE IF SUBJECT IS NOT CREATED
+
+                    if( !empty($collection[$i][0])  AND !empty($collection[$i][1]) AND !empty($collection[$i][2]) ) { //IF CHECKER EMPTY
+
+
+                            $teacher=Teacher::where('fullname',$fullname)->first();
+                            $classroom=Classroom::where('name',$classroom)->first();
+
+
+
+
+                           if (isset($teacher) AND isset($classroom) ) {
+
+                                $subject=Subject::create([
+
+                                'name'=> $name ,
+                                'teacher_id'=>$teacher->id,
+                                'classroom_id'=>$classroom->id,
+                                'program_id'=>$classroom->program->id,
+                                'day'=>$collection[$i][3] ,
+                                'startime'=>$collection[$i][4] ,
+                                'endtime'=>$collection[$i][5] ,
+
+                                 ]);
+
+                                $semesterP=Semester::where('state','process')->first();
+                                $subject->semesters()->attach($semesterP->id);
+
+                            array_push($SboxS,$subject->name);
+                            array_push($SboxC,$subject->classroom->id);
+
+                           } else {
+
+                            array_push($XboxF,$collection[$i][2]);
+                            array_push($XboxC,$collection[$i][1]);
+                            array_push($XboxM,$collection[$i][0]);
+                           }
+
+
+
+
+
+
+                    } //END IF NAME,FULLNAME,CLASSE CHECKER EMPTY
+
+            } //END IF SUBJECT IS NOT IN ARRAY
+
+        } //END FOR
+
+
+        $subjects=Subject::get();
+
+        return redirect('/manager/subject/many')
+        ->with( ['Ebox' => $Ebox, 'SboxS' => $SboxS, 'SboxC' => $SboxC, 'subjects' => $subjects, 'EboxFullName' => $EboxFullName, 'EboxClassroom' => $EboxClassroom, 'EboxClassroomID' => $EboxClassroomID, 'XboxC' => $XboxC,'XboxF' => $XboxF,'XboxM'=>$XboxM ] );
+
+
+    } else { //ELSEIF COLLECTION EN TETE
+
+        return redirect('/manager/subject/many')->with('status1', 'UN PROBLEME EST SURVENU !');
+    }// END IF COLLECTION EN TETE
+
+}
+
+############################# VERSEMENT ##################################################################
+
+    public function CreateManyVersement(Request $request)
+
+    {
+
+         $this->validate(request(),[
+
+        //    'classroom_id'=>'required',
+            'upload_file'=> 'required|max:5000|mimes:xlsx,xls,csv',
+        ]);
+
+   //      dd($request->id);
+
+   //     if (request()->hasFile('upload_file')){
+        $uploadedFile = $request->file('upload_file');
+        $FileName = time() . '.' . $uploadedFile->getClientOriginalExtension();
+        $extension = $uploadedFile->getClientOriginalExtension();
+        $destinationPath = public_path('/files/canevas/');
+        $uploadedFile->move($destinationPath, $FileName);
+
+        $excel= Importer::make('Excel');
+        $excel->load($destinationPath.$FileName);
+        $collection=$excel->getCollection();
+
+       //$date = Carbon::parse($collection[1][2], 'UTC');
+       //dd ($date->isoFormat('YYYY-M-D'));
+       //dd($date);
+       //dd($collection);
+
+
+
+if ($collection[1][0]=='NOM' AND $collection[1][1]=='PRENOM' AND $collection[1][2]=='CLASSE' ){
+
+
+        for ($i=2; $i < $collection->count() ; $i++) {
+
+
+          if( !empty($collection[$i][0])  AND !empty($collection[$i][1]) ) { //IF CHECKER EMPTY
+
+    $varMachaine0 = $collection[$i][0];
+    $varMachaine1 = $collection[$i][1];
+
+
+      $search0  = array('À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'à', 'á', 'â', 'ã', 'ä', 'å', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ð', 'ò', 'ó', 'ô', 'õ', 'ö', 'ù', 'ú', 'û', 'ü', 'ý', 'ÿ',"’");
+      //Préférez str_replace à strtr car strtr travaille directement sur les octets, ce qui pose problème en UTF-8
+      $replace0 = array('A', 'A', 'A', 'A', 'A', 'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I', 'O', 'O', 'O', 'O', 'O', 'U', 'U', 'U', 'U', 'Y', 'a', 'a', 'a', 'a', 'a', 'a', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i', 'o', 'o', 'o', 'o', 'o', 'o', 'u', 'u', 'u', 'u', 'y', 'y',"'");
+
+      $name = str_replace($search0, $replace0, $varMachaine0);
+      $surname = str_replace($search0, $replace0, $varMachaine1);
+      $classrooms=Classroom::get();
+
+
+
+                            $cl=$classrooms->where('name',$collection[$i][2])->first();
+
+                            $student=Student::create([
+
+                                'name'=> strtoupper($name),
+                                'surname'=>strtoupper($surname),
+                                'classroom_id'=>$cl->id,
+
+                                 ]);
+
+
+
+                            $pass = str_random(6); // FOR PASSWORD PURPOSE
+                            $pass=strtolower($pass);
+
+                            $student->matricule= substr(strtoupper($name),0,1).''.substr(strtoupper($surname),0,1).''.$cl->program->id.''.$cl->id.''.$student->id ;
+                            $student->password=$pass;
+                            $student->image=$pass;
+                            $student->save();
+                            $academicyearP=Academicyear::where('state','process')->first();
+                            $student->academicyears()->attach($academicyearP->id);
+
+                          for ($y=3; $y < 34 ; $y++) {
+                            if ($collection[0][$y]=="SEPTEMBRE") {
+                             $date = "2023-09-05";
+                            }elseif ($collection[0][$y]=="OCTOBRE") {
+                              $date = "2023-10-05";
+                            }elseif ($collection[0][$y]=="NOVEMBRE") {
+                              $date = "2023-11-05";
+                            }elseif ($collection[0][$y]=="DECEMBRE") {
+                              $date = "2023-12-05";
+                            }elseif ($collection[0][$y]=="JANVIER") {
+                              $date = "2024-01-05";
+                            }elseif ($collection[0][$y]=="FEVRIER") {
+                              $date = "2024-02-05";
+                            }elseif ($collection[0][$y]=="MARS") {
+                              $date = "2024-03-05";
+                            }elseif ($collection[0][$y]=="AVRIL") {
+                              $date = "2024-04-05";
+                            }elseif ($collection[0][$y]=="MAI") {
+                              $date = "2024-05-05";
+                            }elseif ($collection[0][$y]=="JUIN") {
+                              $date = "2024-06-05";
+                            }
+
+
+
+                            if ($collection[1][$y]=="SCOLARITE") {
+                              if (!empty($collection[$i][$y])) {
+                                $versement=Versement::create([
+                                'type'=> 1,
+                                'amount'=> $collection[$i][$y],
+                                'student_id' => $student->id,
+                                'created_at'=>$date,
+                                ]);
+                              }
+
+                            }elseif ($collection[1][$y]=="CANTINE") {
+                              if (!empty($collection[$i][$y])) {
+                                $versement=Versement::create([
+                                'type'=> 2,
+                                'amount'=> $collection[$i][$y],
+                                'student_id' => $student->id,
+                                'created_at'=>$date,
+                                ]);
+                              }
+                            }elseif ($collection[1][$y]=="BUS") {
+                              if (!empty($collection[$i][$y])) {
+                                $versement=Versement::create([
+                                'type'=> 3,
+                                'amount'=> $collection[$i][$y],
+                                'student_id' => $student->id,
+                                'created_at'=>$date,
+                                ]);
+                              }
+                            }
+
+                          } //END FOR 1ST
+
+
+        } //2ND IF CHECKER EMPTY
+
+      }//END FOR 2ND
+
+
+    } // 1ST IF CHECKER
+
+        return redirect('/manager/versement/many')->with('status1', 'VERSEMENT MULTIPLE REUSSI');
+
+}
+
+
+
+
+############################# END VERSEMENT #############################################################
+
+
+
+
+
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  \App\Commentactu  $commentactu
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Commentactu $commentactu)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  \App\Commentactu  $commentactu
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Commentactu $commentactu)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Commentactu  $commentactu
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, Commentactu $commentactu)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Commentactu  $commentactu
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Commentactu $commentactu)
+    {
+        //
+    }
+}

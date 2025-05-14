@@ -1,0 +1,1 @@
+<?php /**PATH C:\Users\LENOVO T14\Desktop\SCHOOLRAIL_HETEC_V2\resources\views/pdf.blade.php ENDPATH**/ ?>

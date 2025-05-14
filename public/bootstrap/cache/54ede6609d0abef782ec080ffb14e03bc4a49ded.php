@@ -1,0 +1,175 @@
+
+
+
+<?php $__env->startSection('content'); ?>
+
+
+  <?php
+
+  use Carbon\Carbon;
+  $student="activve" ;
+  $box = session()->get( 'box' );
+  $boxName = session()->get( 'boxName' );
+  $boxSurname = session()->get( 'boxSurname' );
+  $boxC = session()->get( 'boxC' );
+  $students = session()->get( 'students' );
+
+  ?>
+
+    <div class="app">
+      <div class="app-body">
+      <!--SIDEBAR -->
+      <?php echo $__env->make('layouts.sidebarM', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+      <!--END SIDEBAR -->
+
+      <div class="app-content">
+
+      <!--NAVBAR -->
+      <?php echo $__env->make('layouts.navbarM', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+      <!--END NAVBAR -->
+
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item " aria-current="page">Accueil</li>
+            <li class="breadcrumb-item active" aria-current="page">Ajouter un étudiant</li>
+          </ol>
+        </nav>
+
+      <div class="container-fluid"> <!-- container-fluid-->
+          <div class="row">
+
+            <div class="col-md-3">
+              <img class=" img-thumbnail card-img-top mx-auto d-block" src="/img/large/xmetudiant.jpg" alt="Card image" style="width:250px; padding-top: 20px">
+            </div>
+
+            <div class="col-md-9">
+
+            <?php echo $__env->make('layouts.errors', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+            <form  action="/manager/CreateManyStudent" method="post" enctype="multipart/form-data">
+              <input type="hidden" value="<?php echo e(csrf_token()); ?>" name="_token">
+              <input type="hidden" value="<?php echo e($manager->id); ?>" name="id">
+
+                <div class="row">
+
+                  <div class="col-sm-6">
+
+                      <label><b>SELECTIONNER LE CANEVAS ETUDIANT</b></label>
+                      <div class="form-group">
+                       <!-- <button type="button" class="btn btn-secondary" data-toggle="file-manager" data-maxsize="1MB" data-type="image/jpeg,image/png">
+                          <i class="icon-folder"></i> Selectionner la resource
+                        </button>-->
+                        <input type="file" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel," class="btn btn-secondary" name="upload_file" required>
+                      </div>
+
+                      <div class="form-group">
+                        <?php $semester= $academicyearP->semesters->where('state','process')->first();
+                              $Csemesters= $academicyearP->semesters->count();
+                         ?>
+
+                          <?php if( $semester->arretDesNotes == 0 AND $Csemesters==1 ): ?>
+                          <button class="btn btn-success" type="submit">
+                            Créer les compte des étudiants
+                          </button>
+                          <?php else: ?>
+                          <span class="badge badge-danger">IMPOSSIBLE DE CREER UN ETUDIANT PENDANT LE SECOND SEMESTRE <br> OU PENDANT QUE LES NOTES SONT ARRETEES</span>
+                          <?php endif; ?>
+                      </div>
+
+                  </div>
+
+                  <div class="col-sm-6">
+
+                    <div class="callout callout-warning">
+                      <h4>CANEVAS DE REMPLISSAGE <i class="icon-pin"></i></h5>
+                      <p>Vous pouvez télécharger le canevas et le remplir</p>
+                      <a href="/files/canevas/canevasEtudiant.xlsx" class="btn btn-bordo mr-2" download="canevasEtudiant.xlsx"> <i class="fa fa-file-excel-o" style="font-size:20px;" aria-hidden="true"></i> Télécharger le canevas ETUDIANT <i class="fa fa-download" aria-hidden="true"></i></a><br><br>
+                      <h4>CONSIGNE A RESPECTER</h4>
+                      <p>
+                      <b>Veuiller ne pas modifier les en-têtes.</b><br>
+                      <b>Veuiller ne pas supprimer les en-têtes.</b><br>
+                      <b>Inserer les informations de chaque étudiant juste après les en-têtes.</b><br>
+                      <b>Le document ne doit pas dépasser la taille de 5Mo.</b><br>
+                      </p>
+                    </div>
+
+                  </div>
+
+                </div>
+                      <br>
+              </form>
+
+              </div>
+
+
+
+        </div>
+
+
+              <?php if(session('status1')): ?>
+                  <div align="center">
+                      <div class="alert alert-danger text-center">
+                       <b><i class="icon-info"></i> <?php echo e(session('status1')); ?><br></b>
+                       <p>Le canevas que vous avez utilisé n'est pas conforme.</p>
+                       <p>Veuillez télécharger le canevas correct et inserer les étudiants</p>
+                       <a href="/files/canevas/canevasEtudiant.xlsx" class="btn btn-bordo mr-2" download="canevasEtudiant.xlsx"> <i class="fa fa-file-excel-o" style="font-size:20px;" aria-hidden="true"></i> Télécharger le canevas ETUDIANT <i class="fa fa-download" aria-hidden="true"></i></a>
+                      </div>
+                  </div>
+              <?php endif; ?>
+
+          <?php if(isset($boxC)): ?>
+              <?php if(count($boxC) >=1): ?>
+              <hr>
+                  <div align="center">
+                    <div class="alert alert-success text-center">
+                       <b><i class="icon-info"></i>
+                        LES ETUDIANTS AVEC CES ADRESSES EMAILS ONT ETE AJOUTES AVEC SUCCES
+                        <br></b>
+
+                       <?php for( $i = 0; $i < count($boxC); $i++): ?>
+
+                       <?php $BOX=$students->where('email',$boxC[$i])->first(); ?>
+
+                        <?php echo e($i + 1); ?> -  <b><?php echo e($BOX->name); ?> <?php echo e($BOX->surname); ?> / <?php echo e($BOX->email); ?> </b> <br>
+
+                       <?php endfor; ?>
+                      </div>
+                  </div>
+              <?php endif; ?>
+          <?php endif; ?>
+
+
+          <?php if(isset($box)): ?>
+              <?php if(count($box) >=1): ?>
+              <hr>
+                  <div align="center">
+                    <div class="alert alert-danger text-center">
+                       <b><i class="icon-info"></i> LES ETUDIANTS AVEC CES ADRESSES EMAILS N'ONT PAS PU ETRE AJOUTES<br></b>
+
+                       <?php for( $i = 0; $i < count($box); $i++): ?>
+
+                       <?php $BOX=$students->where('email',$box[$i])->first(); ?>
+
+                        <?php echo e($i + 1); ?> -  <b><?php echo e($boxName[$i]); ?> <?php echo e($boxSurname[$i]); ?> / <?php echo e($box[$i]); ?></b> EXISTE DEJA EN TANT QUE : <b><?php echo e($BOX->name); ?> <?php echo e($BOX->surname); ?> / <?php echo e($BOX->email); ?> </b>  <br>
+
+                       <?php endfor; ?>
+
+                      </div>
+                  </div>
+              <?php endif; ?>
+          <?php endif; ?>
+
+
+<hr>
+
+
+
+      </div> <!-- END container-fluid -->
+
+
+      </div>
+    </div>
+  </div>
+
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\LENOVO T14\Desktop\SCHOOLRAIL_HETEC_V2\resources\views/manager/studentMany.blade.php ENDPATH**/ ?>

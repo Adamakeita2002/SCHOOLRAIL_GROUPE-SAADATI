@@ -1,0 +1,28 @@
+            <td> <!-- START CALCULE DE MOYENNE -->
+              @if(empty($testsTF))
+              <?php 
+                $tests=$testsP->where('subject_id',$subject->id)->all();
+                $Smark=0;
+                $j=0;
+               ?>
+                  @foreach ($tests as $test)
+                    <?php $j++;?>
+
+                    @foreach ($ClaStudent->marks->where('test_id',$test->id) as $mark)
+                    <?php 
+                    $Smark=$Smark + $mark->value;               
+                    ?>
+                    @endforeach
+       
+                  @endforeach
+             
+              <?php 
+              $Moyenne=$Smark/$j;
+              ?>
+              <strong><span class="@if($Moyenne >= 10) badge btn-vert text-white  @elseif($Smark/$j < 10) badge badge-danger @endif" style="font-size: 20px; width:65px;" >{{round($Moyenne,2)}}</strong>
+              @endif
+            </td> <!-- END CALCULE DE MOYENNE -->
+
+
+
+            

@@ -1,0 +1,80 @@
+<span><!-- START Edit student -->
+                <p class="text-center"><button class="btn btn-warning text-white" data-toggle="modal" data-target="#MM{{$student->id}}" ><b>MODIFIER</b></button></p>
+                <!-- Modal Edit student -->
+                <div class="modal fade" id="MM{{$student->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <form action="{{ URL::to('/manager/modifyStudent') }}" method="post" enctype="multipart/form-data">
+                  <input type="hidden" value="{{ csrf_token() }}" name="_token">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Modifier les informations concernant cet étudiant
+                            <b>{{$student->name}} {{$student->surname}}</b> 
+                          </h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                      <div class="modal-body">
+                        <div class="text-center">
+                        <p>Entrer la correction:</p>
+            
+                      <div class="form-group">
+                        <label><b>Entrer le nom de l' étudiant</b></label>
+                        <input type="text" name="name" placeholder="{{$student->name}}" class="form-control">
+                      </div>
+
+                      <div class="form-group">
+                        <label><b>Entrer le prénom(s) de l' étudiant</b></label>
+                        <input type="text" name="surname" placeholder="{{$student->surname}}" class="form-control">
+                      </div>
+
+                      <div class="form-group">
+                        <label><b>Entrer la date de naissance de l' étudiant</b></label>
+                        <input type="date" name="dateofbirth" placeholder="{{$student->dateofbirth}}" class="form-control">
+                      </div>
+
+                      <div class="form-group">
+                        <label><b>Entrer la nationalité de l' étudiant</b></label>
+                        <input type="texte" name="nationality" placeholder="{{$student->nationality}}" class="form-control">
+                      </div>  
+
+                      <div class="form-group">
+                        <label><b>Entrer le genre</b></label>
+                        <select class="form-control" name="gender">
+                          <option value="">Genre ({{$student->genre}})</option>
+                          <option value="M">Masculin</option>
+                          <option value="F">Féminin</option>
+                        </select>
+                      </div>  
+
+                      <div class="form-group">
+                        <label><b>Entrer l'email de l' étudiant</b></label>
+                        <input type="email" name="email" placeholder="{{$student->email}}" class="form-control">
+                      </div>
+
+                      <div class="form-group">
+                        <label><b>Entrer le contact de l' étudiant</b></label>
+                        <input type="number" name="tel" placeholder="{{$student->tel}}" class="form-control">
+                      </div>
+
+                      <div class="form-group">
+                        <label><b>Entrer l'adresse de l' étudiant</b></label>
+                        <input type="texte" name="address" placeholder="{{$student->address}}" class="form-control">
+                      </div>                       
+
+
+                      <input type="hidden" class="form-control" name="id" value="{{$student->id}}" hidden="">
+                      <button type="submit" class="btn btn-warning text-white">
+                        Valider la modification
+                      </button>
+                      </div>
+                    </div>
+
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">ANNULER</button>
+                      </div>
+                  </div>
+                </div>
+                </form>
+              </div>
+              </span><!-- END Edit student -->
