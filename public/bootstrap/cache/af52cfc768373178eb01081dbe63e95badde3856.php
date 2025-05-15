@@ -1,20 +1,20 @@
-@extends ('layouts.master')
 
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
     <?php use Carbon\Carbon; ?>
     <?php $account = 'active'; ?>
     <div class="app">
         <div class="app-body">
 
             <!--SIDEBAR -->
-            @include('layouts.sidebarS')
+            <?php echo $__env->make('layouts.sidebarS', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
             <!--END SIDEBAR -->
 
             <div class="app-content">
 
                 <!--NAVBAR -->
-                @include('layouts.navbar')
+                <?php echo $__env->make('layouts.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                 <!--END NAVBAR -->
 
                 <nav aria-label="breadcrumb">
@@ -35,10 +35,10 @@
                                     <div class="card">
                                         <div style="padding-top: 20px; text-align: center;">
                                             <i class="icon-notebook font-lg text-primary" style="font-size: 120px;"></i>
-                                            @if ($Ressourceltn->count() >= 1)
+                                            <?php if($Ressourceltn->count() >= 1): ?>
                                                 <span class="badge badge-pill badge-primary"
-                                                    style="font-size: 20px">{{ $Ressourceltn->count() }}</span>
-                                            @endif
+                                                    style="font-size: 20px"><?php echo e($Ressourceltn->count()); ?></span>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="card-body">
                                             <h4 class="card-title" style="text-align: center;"> E-Learning</h4>
@@ -53,10 +53,10 @@
                                     <div class="card">
                                         <div style="padding-top: 20px; text-align: center;">
                                             <i class="icon-note font-lg text-success" style="font-size: 120px"></i>
-                                            @if ($Testltn->count() >= 1)
+                                            <?php if($Testltn->count() >= 1): ?>
                                                 <span class="badge badge-pill badge-success"
-                                                    style="font-size: 20px">{{ $Testltn->count() }}</span>
-                                            @endif
+                                                    style="font-size: 20px"><?php echo e($Testltn->count()); ?></span>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="card-body">
                                             <h4 class="card-title" style="text-align: center;"> Test (Exercice)</h4>
@@ -71,10 +71,10 @@
                                     <div class="card">
                                         <div style="padding-top: 20px; text-align: center;">
                                             <i class="fa fa-money font-lg text-warning" style="font-size: 120px"></i>
-                                            @if ($Markltn->count() >= 1)
+                                            <?php if($Markltn->count() >= 1): ?>
                                                 <span class="badge badge-pill badge-warning text-white"
-                                                    style="font-size: 20px">{{ $Markltn->count() }}</span>
-                                            @endif
+                                                    style="font-size: 20px"><?php echo e($Markltn->count()); ?></span>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="card-body">
                                             <h4 class="card-title" style="text-align: center;"> Paiements </h4>
@@ -89,10 +89,10 @@
                                     <div class="card">
                                         <div style="padding-top: 20px; text-align: center;">
                                             <i class="icon-info font-lg text-info" style="font-size: 120px"></i>
-                                            @if ($Newsltn->count() >= 1)
+                                            <?php if($Newsltn->count() >= 1): ?>
                                                 <span class="badge badge-pill badge-info"
-                                                    style="font-size: 20px">{{ $Newsltn->count() }}</span>
-                                            @endif
+                                                    style="font-size: 20px"><?php echo e($Newsltn->count()); ?></span>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="card-body">
                                             <h4 class="card-title" style="text-align: center;"> HETEC Infos</h4>
@@ -107,10 +107,10 @@
                                     <div class="card">
                                         <div style="padding-top: 20px; text-align: center;">
                                             <i class="icon-emotsmile font-lg text-danger" style="font-size: 120px"></i>
-                                            @if ($Bdeltn->count() >= 1)
+                                            <?php if($Bdeltn->count() >= 1): ?>
                                                 <span class="badge badge-pill badge-danger"
-                                                    style="font-size: 20px">{{ $Bdeltn->count() }}</span>
-                                            @endif
+                                                    style="font-size: 20px"><?php echo e($Bdeltn->count()); ?></span>
+                                            <?php endif; ?>
                                         </div>
                                         <div class="card-body">
                                             <h4 class="card-title" style="text-align: center;"> APE/Conseils</h4>
@@ -180,52 +180,52 @@
                             <div class="container-fluid">
 
 
-                                @if (!empty($news))
+                                <?php if(!empty($news)): ?>
                                     <h1 class="text-center my-3">Actualités</h1>
                                     <div id="myCarousel" class="carousel slide" data-ride="carousel">
                                         <div class="carousel-inner row w-100 mx-auto">
-                                            @foreach ($news as $new)
+                                            <?php $__currentLoopData = $news; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $new): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <div class="carousel-item col-md-4 active">
                                                     <div class="card">
                                                         <div class="card-body">
 
                                                             <?php $limitt = 30; ?>
-                                                            @if (strlen($new->title) > $limitt)
+                                                            <?php if(strlen($new->title) > $limitt): ?>
                                                                 <?php $summaryt = substr($new->title, 0, strrpos(substr($new->title, 0, $limitt), ' ')) . '...'; ?>
-                                                                <h4 class="card-title">{{ $summaryt }}</h4>
-                                                            @else
-                                                                <h4 class="card-title">{{ $new->title }}</h4>
-                                                            @endif
+                                                                <h4 class="card-title"><?php echo e($summaryt); ?></h4>
+                                                            <?php else: ?>
+                                                                <h4 class="card-title"><?php echo e($new->title); ?></h4>
+                                                            <?php endif; ?>
 
                                                             <?php $limit = 75; ?>
-                                                            @if (strlen($new->description) > $limit)
+                                                            <?php if(strlen($new->description) > $limit): ?>
                                                                 <?php $summary = substr($new->description, 0, strrpos(substr($new->description, 0, $limit), ' ')) . '...'; ?>
-                                                                <p class="card-text">{{ $summary }}</p>
-                                                            @else
-                                                                <p class="card-text">{{ $new->description }}</p>
-                                                            @endif
+                                                                <p class="card-text"><?php echo e($summary); ?></p>
+                                                            <?php else: ?>
+                                                                <p class="card-text"><?php echo e($new->description); ?></p>
+                                                            <?php endif; ?>
                                                             <p class="card-text">
                                                                 <small
-                                                                    class="text-muted">{{ $new->created_at->diffForHumans() }}</small>
+                                                                    class="text-muted"><?php echo e($new->created_at->diffForHumans()); ?></small>
                                                             </p>
                                                             <!--
                                                           <p class="card-text">
-                                                            <a href="/student/schoolNews?k#N{{ $new->id }}" class="btn btn-primary">Lire</a>
+                                                            <a href="/student/schoolNews?k#N<?php echo e($new->id); ?>" class="btn btn-primary">Lire</a>
                                                           </p>
                                                         -->
                                                         </div>
                                                     </div>
                                                 </div>
-                                            @endforeach
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </div>
-                                @endif
+                                <?php endif; ?>
 
                                 <!-- EMPTY HANDLER -->
-                                @if ($news->count() <= 0)
+                                <?php if($news->count() <= 0): ?>
                                     <p class="text-center">
                                         <button class="btn btn-danger"> AUCUNE ACTUALITE DISPONIBLE </button>
                                     </p>
-                                @endif
+                                <?php endif; ?>
                                 <!-- END EMPTY HANDLER -->
                                 <!--
                                                   <div class="container">
@@ -256,7 +256,7 @@
                         <div class="calendar light mx-auto d-block">
                             <div class="calendar_header">
                                 <h1 class = "text-center">Calendrier Scolaire</h1>
-                                <p class="header_copy"> {{ $academicyearP->labelYear }}</p>
+                                <p class="header_copy"> <?php echo e($academicyearP->labelYear); ?></p>
                             </div>
                             <div class="calendar_plan">
                                 <div class="cl_planS">
@@ -278,13 +278,14 @@
                                 ?>
                                 <p class="ce_title">EVENEMENT A VENIR</p>
 
-                                @foreach ($calendars as $calendar)
-                                    @if (now()->lessThanOrEqualTo($calendar->date))
+                                <?php $__currentLoopData = $calendars; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $calendar): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <?php if(now()->lessThanOrEqualTo($calendar->date)): ?>
                                         <div class="event_item">
                                             <div class="ei_Dot Tdot_active"></div>
                                             <div class="ei_Title">
                                                 <b><?php $date = Carbon::parse($calendar->date, 'UTC'); ?>
-                                                    {{ $date->locale('fr_FR')->isoFormat('dddd DD MMMM') }}
+                                                    <?php echo e($date->locale('fr_FR')->isoFormat('dddd DD MMMM')); ?>
+
                                                 </b>
                                                 /
                                                 <b><?php $time = Carbon::parse($calendar->time, 'UTC'); ?>
@@ -293,17 +294,19 @@
                                             </div>
                                             <div class="ei_Copy">
                                                 <p>
-                                                    <b>{{ $subjects->where('id', $calendar->subject_id)->pluck('name')->first() }}
+                                                    <b><?php echo e($subjects->where('id', $calendar->subject_id)->pluck('name')->first()); ?>
+
                                                     </b> <br>
                                                     <span
-                                                        class="@if ($calendar->epreuve_id == 1) badge badge-primary @elseif($calendar->epreuve_id == 2) badge badge-success @else badge badge-dark @endif "
-                                                        style="font-size: 13px">{{ $epreuves->where('id', $calendar->epreuve_id)->pluck('name')->first() }}
+                                                        class="<?php if($calendar->epreuve_id == 1): ?> badge badge-primary <?php elseif($calendar->epreuve_id == 2): ?> badge badge-success <?php else: ?> badge badge-dark <?php endif; ?> "
+                                                        style="font-size: 13px"><?php echo e($epreuves->where('id', $calendar->epreuve_id)->pluck('name')->first()); ?>
+
                                                     </span>
                                                 </p>
                                             </div>
                                         </div>
-                                    @endif
-                                @endforeach
+                                    <?php endif; ?>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </div>
                         </div>
 
@@ -387,4 +390,6 @@
                                                 (jQuery);
                                             </script>  -->
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\LENOVO T14\Desktop\SCHOOLRAIL_GROUPE SAADATI\resources\views/student/dashboard.blade.php ENDPATH**/ ?>

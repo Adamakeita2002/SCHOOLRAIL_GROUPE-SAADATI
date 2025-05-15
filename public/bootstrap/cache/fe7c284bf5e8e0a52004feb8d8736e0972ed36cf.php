@@ -1,5 +1,3 @@
-
-
 <?php $__env->startSection('content'); ?>
 
 <div class="container-fluid">
@@ -12,11 +10,11 @@
 
                 <p class="text-center">
                     <img class="card-img-top img-fluid mx-auto d-block mt-5" style="width:372.5px;"
-                    src="/assets/img/logo-hetec.jpg" alt="Card image">
+                        src="/assets/img/logo-sabile-12x12-1.webp" alt="Card image">
                 </p>
 
                 <p class="text-center">
-                        <img class="card-img-top img-fluid mx-auto d-block" style="width:272.5px;"
+                    <img class="card-img-top img-fluid mx-auto d-block" style="width:272.5px;"
                         src="/assets/img/logo-schoolrail.png" alt="Card image">
                 </p>
 

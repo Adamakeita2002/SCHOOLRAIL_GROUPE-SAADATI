@@ -1,8 +1,8 @@
-@extends ('layouts.master')
+
 
 <link href="/css/login.css" rel="stylesheet">
 
-@section('content')
+<?php $__env->startSection('content'); ?>
     <?php
     
     if (isset($_GET['opt'])) {
@@ -13,8 +13,7 @@
     <div class="container-fluid">
         <div class="row no-gutter">
             <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image">
-                {{-- <img src="{{ asset('img/teamator.jpeg') }}" alt="" class="img-fluid"
-            style="object-fit: cover;display : block;widht:100%;height:100%;">  --}}
+                
             </div>
             <div class="col-md-8 col-lg-6">
                 <div class="login d-flex align-items-center ">
@@ -29,7 +28,7 @@
                             </div>
                         </div> <br><br>
 
-                        @if ($academicyearP)
+                        <?php if($academicyearP): ?>
                             <div class="row">
                                 <div class="col-3  h-125 bg-white">
                                     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist"
@@ -67,7 +66,7 @@
                                         width="150px" height="150px">
                                 </div>
                                 <div class="col-9 h-125">
-                                    @include ('layouts.errors')
+                                    <?php echo $__env->make('layouts.errors', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                                     <div class="tab-content" id="v-pills-tabContent">
 
 
@@ -88,8 +87,9 @@
                                                 <b>Professeur </b>
                                             </h3>
 
-                                            <form method="POST" action="{{ route('teacher.login.submit') }}">
-                                                {{ csrf_field() }}
+                                            <form method="POST" action="<?php echo e(route('teacher.login.submit')); ?>">
+                                                <?php echo e(csrf_field()); ?>
+
 
                                                 <div class="form-label-group">
                                                     <input type="email" id="inputEmail" name="email"
@@ -134,8 +134,9 @@
                                             </h3>
 
                                             <form role='form' method="POST"
-                                                action="{{ route('manager.login.submit') }}">
-                                                {{ csrf_field() }}
+                                                action="<?php echo e(route('manager.login.submit')); ?>">
+                                                <?php echo e(csrf_field()); ?>
+
 
 
                                                 <div class="form-label-group">
@@ -185,8 +186,9 @@
                                             </h3>
 
                                             <form role='form' method="POST"
-                                                action="{{ route('tutor.login.submit') }}">
-                                                {{ csrf_field() }}
+                                                action="<?php echo e(route('tutor.login.submit')); ?>">
+                                                <?php echo e(csrf_field()); ?>
+
 
                                                 <div class="form-label-group">
                                                     <input type="email" id="inputEmail3" name="email"
@@ -241,7 +243,7 @@
                                 </div>
                             </div>
                         -->
-                        @else
+                        <?php else: ?>
                             <div class="row">
 
                                 <div class="col-md-9 col-lg-8 mx-auto">
@@ -260,7 +262,7 @@
                                 <h5>ou envoyez un email à l'adresse suivante :</h5>
                                 <p><b>info@hetec-mali.com</b></p>
                             </div>
-                        @endif
+                        <?php endif; ?>
 
 
 
@@ -270,4 +272,6 @@
             </div>
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\LENOVO T14\Desktop\SCHOOLRAIL_GROUPE SAADATI\resources\views/auth/teamator-login.blade.php ENDPATH**/ ?>

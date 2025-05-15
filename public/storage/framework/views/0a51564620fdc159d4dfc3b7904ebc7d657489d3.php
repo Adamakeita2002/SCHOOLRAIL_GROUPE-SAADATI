@@ -14,8 +14,8 @@
 
                     <div class="row justify-content-center">
                         <div class="col-sm-12">
-                            <img src="/assets/img/logo-hetec.jpg" alt="HETEC"
-                                class="img-fluid rounded mx-auto d-block" style="width: 100%; height: 100%">
+                            <img src="/assets/img/logo-sabile-12x12-1.webp" alt="HETEC"
+                                class="img-fluid rounded mx-auto d-block" width="150px" height="150px">
                         </div>
                     </div> <br>
 

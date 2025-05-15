@@ -1,6 +1,6 @@
-@extends ('layouts.master')
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
     <div class="container-fluid">
         <div class="row justify-content-md-center">
 
@@ -11,7 +11,7 @@
 
                     <p class="text-center">
                         <img class="card-img-top img-fluid mx-auto d-block mt-5" style="width:300px;"
-                            src="/assets/img/logo-sabile-12x12-1.webp" alt="Card image">
+                            src="/assets/img/logo-sabile-12x12-1.webp" alt="Card image" style="">
                     </p>
 
                     <p class="text-center">
@@ -47,4 +47,6 @@
 
         </div>
     </div>
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\LENOVO T14\Desktop\SCHOOLRAIL_GROUPE SAADATI\resources\views/home/index.blade.php ENDPATH**/ ?>

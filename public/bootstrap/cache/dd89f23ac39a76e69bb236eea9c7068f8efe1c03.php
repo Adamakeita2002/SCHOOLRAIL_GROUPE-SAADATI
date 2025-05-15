@@ -1,13 +1,13 @@
-@extends ('layouts.master')
+
 
 <link href="/css/login.css" rel="stylesheet">
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 
     <div class="container-fluid">
         <div class="row no-gutter">
             <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image">
-                <img src="{{ asset('/img/studentlogin.png') }}" alt="Studentlogin.png" class="img-fluid"
+                <img src="<?php echo e(asset('/img/studentlogin.png')); ?>" alt="Studentlogin.png" class="img-fluid"
                     style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             <div class="col-md-8 col-lg-6">
@@ -21,14 +21,15 @@
                             </div>
                         </div> <br>
 
-                        @if ($academicyearP)
+                        <?php if($academicyearP): ?>
                             <div class="row">
                                 <div class="col-md-9 col-lg-8 mx-auto">
                                     <h3 class="login-heading mb-4"> Connectez vous à votre compte <b> Schoolrail!</b> </h3>
 
-                                    @include ('layouts.errors')
-                                    <form role='form' method="POST" action="{{ route('student.login.submit') }}">
-                                        {{ csrf_field() }}
+                                    <?php echo $__env->make('layouts.errors', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                    <form role='form' method="POST" action="<?php echo e(route('student.login.submit')); ?>">
+                                        <?php echo e(csrf_field()); ?>
+
 
                                         <div class="form-label-group">
                                             <input type="text" name="matricule" id="matricule" class="form-control"
@@ -36,11 +37,11 @@
                                             <label for="matricule">Matricule</label>
                                         </div>
 
-                                        @if ($errors->has('matricule'))
+                                        <?php if($errors->has('matricule')): ?>
                                             <span class="help-block">
-                                                <strong>{{ $errors->first('matricule') }}</strong>
+                                                <strong><?php echo e($errors->first('matricule')); ?></strong>
                                             </span>
-                                        @endif
+                                        <?php endif; ?>
 
 
                                         <div class="form-label-group">
@@ -49,11 +50,11 @@
                                             <label for="password">Mot de passe</label>
                                         </div>
                                         <!--
-                                                                                                          @if ($errors->has('password'))
+                                                                                                          <?php if($errors->has('password')): ?>
     <span class="help-block">
-                                                                                                          <strong>{{ $errors->first('password') }}</strong>
+                                                                                                          <strong><?php echo e($errors->first('password')); ?></strong>
                                                                                                               </span>
-    @endif
+    <?php endif; ?>
                                                                                             -->
                                         <div class="custom-control custom-checkbox mb-3">
                                             <input type="checkbox" class="custom-control-input" id="customCheck1">
@@ -77,7 +78,7 @@
                                         alt="Schoolrail" class="img-fluid rounded mx-auto d-block">
                                 </div>
                             </div>
-                        @else
+                        <?php else: ?>
                             <div class="row">
 
                                 <div class="col-md-9 col-lg-8 mx-auto">
@@ -104,7 +105,7 @@
                                 </div>
 
                             </div>
-                        @endif
+                        <?php endif; ?>
 
                     </div>
                 </div>
@@ -112,4 +113,6 @@
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\LENOVO T14\Desktop\SCHOOLRAIL_GROUPE SAADATI\resources\views/auth/student-login.blade.php ENDPATH**/ ?>

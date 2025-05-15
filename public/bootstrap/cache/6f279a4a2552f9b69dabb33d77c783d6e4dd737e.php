@@ -1,58 +1,60 @@
-
-
-
 <?php $__env->startSection('content'); ?>
 
-  <?php $school="activve" ;?>
-    <div class="app">
-      <div class="app-body">
-      <!--SIDEBAR -->
-      <?php echo $__env->make('layouts.sidebarT', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-      <!--END SIDEBAR -->
+<?php $school = "activve"; ?>
+<div class="app">
+  <div class="app-body">
+    <!--SIDEBAR -->
+    <?php echo $__env->make('layouts.sidebarT', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    <!--END SIDEBAR -->
 
-      <div class="app-content">
+    <div class="app-content">
 
       <!--NAVBAR -->
       <?php echo $__env->make('layouts.navbarT', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
       <!--END NAVBAR -->
 
-        <nav aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item " aria-current="page">Accueil</li>
-            <li class="breadcrumb-item active " aria-current="page">Actualités</li>
-          </ol>
-        </nav>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item " aria-current="page">Accueil</li>
+          <li class="breadcrumb-item active " aria-current="page">Actualités</li>
+        </ol>
+      </nav>
 
       <div class="container-fluid"> <!-- container-fluid-->
 
-  <div class="row justify-content-md-center">
+        <div class="row justify-content-md-center">
 
-      <!-- Blog Entries Column offset-md-1 -->
-      <div class="col-md-7 ">
+          <!-- Blog Entries Column offset-md-1 -->
+          <div class="col-md-7 ">
 
-        <h1 class="my-4 card-header text-center bg-primary text-white">ACTUALITES</h1>
+            <h1 class="my-4 card-header text-center bg-primary text-white">ACTUALITES</h1>
 
-        <!-- Blog Post -->
+            <!-- Blog Post -->
 
-        <?php $__currentLoopData = $news; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $new): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <div class="card mb-4" id="N<?php echo e($new->id); ?>">
+            <?php $__currentLoopData = $news;
+            $__env->addLoop($__currentLoopData);
+            foreach ($__currentLoopData as $new): $__env->incrementLoopIndices();
+              $loop = $__env->getLastLoop(); ?>
+              <div class="card mb-4" id="N<?php echo e($new->id); ?>">
 
-          <div class="card-body">
-            <h2 class="card-title"><?php echo e($new->title); ?></h2>
-            <p class="card-text"><?php echo e($new->description); ?></p>
-          </div>
-          <?php if(!empty($new->upload)): ?>
-          <img class="card-img-top" src="/files/schoolNews/<?php echo e($new->upload); ?>" alt="IMAGE">
-          <?php endif; ?>
-          <div class="card-footer text-muted">
-            <p>- Posté il y a <b><?php echo e($new->created_at->diffForHumans()); ?></b></p>
-          </div>
-        </div>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                <div class="card-body">
+                  <h2 class="card-title"><?php echo e($new->title); ?></h2>
+                  <p class="card-text"><?php echo e($new->description); ?></p>
+                </div>
+                <?php if (!empty($new->upload)): ?>
+                  <img class="card-img-top" src="/files/schoolNews/<?php echo e($new->upload); ?>" alt="IMAGE">
+                <?php endif; ?>
+                <div class="card-footer text-muted">
+                  <p>- Posté il y a <b><?php echo e($new->created_at->diffForHumans()); ?></b></p>
+                </div>
+              </div>
+            <?php endforeach;
+            $__env->popLoop();
+            $loop = $__env->getLastLoop(); ?>
 
 
 
-        <!-- Pagination
+            <!-- Pagination
         <ul class="pagination justify-content-center mb-4">
           <li class="page-item">
             <a class="page-link" href="#">&larr; Older</a>
@@ -61,34 +63,34 @@
             <a class="page-link" href="#">Newer &rarr;</a>
           </li>
         </ul> -->
-        <!-- EMPTY HANDLER -->
-        <?php if($news->count() <= 0 ): ?>
-        <p class="text-center">
-          <button class="btn btn-danger"> AUCUNE ACTUALITE EN LIGNE </button>
-        </p>
-        <?php endif; ?>
-        <!-- END EMPTY HANDLER -->
+            <!-- EMPTY HANDLER -->
+            <?php if ($news->count() <= 0): ?>
+              <p class="text-center">
+                <button class="btn btn-danger"> AUCUNE ACTUALITE EN LIGNE </button>
+              </p>
+            <?php endif; ?>
+            <!-- END EMPTY HANDLER -->
 
-      </div>
+          </div>
 
-      <!-- Sidebar Widgets Column -->
-      <div class="col-md-4">
+          <!-- Sidebar Widgets Column -->
+          <div class="col-md-4">
 
 
-        <!-- Categories Widget -->
-    <div class="card my-4">
-        <h5 class="card-header">Mot de la directrice</h5>
-        <img class="rounded-circle mt-4 mx-auto d-block" alt="directeur" width="200" height="200" src="/assets/img/logo-petite-academy.jpg" alt="Card image">
-        <div class="card-body">
-          <h4 class="card-title text-center">Bonjour</h4>
-          <p class="card-text">Vu les conditions sanitaires déplorables <b>(Covid-19) </b>, nous avons conçu cette plateforme dans l'objectif d'accomplir notre mission, qui est de vous assurer une éducation garantie.</p>
-          <p class="card-text">Nous espérons que cela a été plus que utile.</p>
-          <p class="card-text"><i>Cordialement!</i></p>
-        </div>
+            <!-- Categories Widget -->
+            <div class="card my-4">
+              <h5 class="card-header">Mot de la directrice</h5>
+              <img class="rounded-circle mt-4 mx-auto d-block" alt="directeur" width="200" height="200" src="/assets/img/logo-sabile-12x12-1.webp" alt="Card image">
+              <div class="card-body">
+                <h4 class="card-title text-center">Bonjour</h4>
+                <p class="card-text">Vu les conditions sanitaires déplorables <b>(Covid-19) </b>, nous avons conçu cette plateforme dans l'objectif d'accomplir notre mission, qui est de vous assurer une éducation garantie.</p>
+                <p class="card-text">Nous espérons que cela a été plus que utile.</p>
+                <p class="card-text"><i>Cordialement!</i></p>
+              </div>
 
-    </div>
+            </div>
 
-        <!-- Side Widget
+            <!-- Side Widget
         <div class="card my-4">
           <h5 class="card-header">Contacts Importants</h5>
           <div class="card-body">
@@ -109,17 +111,17 @@
         </div> -->
 
 
-      </div>
+          </div>
 
-    </div>
-    <!-- /.row -->
+        </div>
+        <!-- /.row -->
 
       </div> <!-- END container-fluid -->
 
 
-      </div>
     </div>
   </div>
+</div>
 
 <!-- CARD CAROUSEL JS
 <script type="text/javascript">

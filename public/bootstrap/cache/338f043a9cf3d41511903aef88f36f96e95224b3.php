@@ -1,18 +1,18 @@
-@extends ('layouts.master')
 
 
-@section('content')
+
+<?php $__env->startSection('content'); ?>
     <?php $school = 'activve'; ?>
     <div class="app">
         <div class="app-body">
             <!--SIDEBAR -->
-            @include('layouts.sidebarS')
+            <?php echo $__env->make('layouts.sidebarS', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
             <!--END SIDEBAR -->
 
             <div class="app-content">
 
                 <!--NAVBAR -->
-                @include('layouts.navbar')
+                <?php echo $__env->make('layouts.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
                 <!--END NAVBAR -->
 
                 <nav aria-label="breadcrumb">
@@ -33,29 +33,29 @@
 
                             <!-- Blog Post -->
 
-                            @foreach ($news as $new)
-                                <div class="card mb-4" id="N{{ $new->id }}">
+                            <?php $__currentLoopData = $news; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $new): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="card mb-4" id="N<?php echo e($new->id); ?>">
 
                                     <div class="card-body">
-                                        <h2 class="card-title">{{ $new->title }}</h2>
-                                        <p class="card-text">{{ $new->description }}</p>
+                                        <h2 class="card-title"><?php echo e($new->title); ?></h2>
+                                        <p class="card-text"><?php echo e($new->description); ?></p>
                                     </div>
-                                    @if (!empty($new->upload))
-                                        <img class="card-img-top" src="/files/schoolNews/{{ $new->upload }}"
+                                    <?php if(!empty($new->upload)): ?>
+                                        <img class="card-img-top" src="/files/schoolNews/<?php echo e($new->upload); ?>"
                                             alt="IMAGE">
-                                    @endif
+                                    <?php endif; ?>
                                     <div class="card-footer text-muted">
-                                        <p>- Posté il y a <b>{{ $new->created_at->diffForHumans() }}</b></p>
+                                        <p>- Posté il y a <b><?php echo e($new->created_at->diffForHumans()); ?></b></p>
                                     </div>
                                 </div>
-                            @endforeach
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                             <!-- EMPTY HANDLER -->
-                            @if ($news->count() <= 0)
+                            <?php if($news->count() <= 0): ?>
                                 <p class="text-center">
                                     <button class="btn btn-danger"> AUCUNE ACTUALITE DISPONIBLE </button>
                                 </p>
-                            @endif
+                            <?php endif; ?>
                             <!-- END EMPTY HANDLER -->
 
 
@@ -167,4 +167,6 @@
                 })
                 (jQuery);
             </script>  -->
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.master', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\Users\LENOVO T14\Desktop\SCHOOLRAIL_GROUPE SAADATI\resources\views/student/schoolNews.blade.php ENDPATH**/ ?>

@@ -69,7 +69,7 @@
 
 
     <!-- CONTENT -->
-    @yield ('content')
+    <?php echo $__env->yieldContent('content'); ?>
     <!-- CONTENT -->
 
 
@@ -90,3 +90,4 @@
 
 
 </html>
+<?php /**PATH C:\Users\LENOVO T14\Desktop\SCHOOLRAIL_GROUPE SAADATI\resources\views/layouts/master.blade.php ENDPATH**/ ?>
